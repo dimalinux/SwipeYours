@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
         //  The logs may have credit card numbers in them, so don't send the output to the system
         //  log below unless you are testing.
         //
-        Log.d(tag, text);
+        //Log.d(tag, text);
     }
 
 
