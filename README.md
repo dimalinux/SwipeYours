@@ -9,7 +9,6 @@ SwipeYours allows users to input their own Visa magstripe data to perform NFC pa
   
 The Google Nexus 4 and 5 are both phones that meet the above requirements.
 
-
 ### Magstripe Data Requirement: ###
 
 SwipeYours parses the card data needed to complete NFC transactions via Visa MSD from the track 2 portion of the magstripe data on a Visa credit cards.
@@ -17,6 +16,10 @@ SwipeYours parses the card data needed to complete NFC transactions via Visa MSD
 USB magnetic stripe readers are available cheaply (around $20 delivered in the US) from both Amazon and Ebay.  The inexpense readers act as a USB keyboard input and require no special drivers on most desktop computers.
 
 If saving your Magstripe data to Google Drive is not a security concern, the magstripe data can be quickly copied to your phone via an app like Google Keep.
+
+### Google Play Link ###
+
+https://play.google.com/store/apps/details?id=to.noc.android.swipeyours  
   
 ### Developing: ###
 
