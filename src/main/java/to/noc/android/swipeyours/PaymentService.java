@@ -28,16 +28,22 @@ public class PaymentService extends HostApduService implements SharedPreferences
             (byte)0x6F, (byte)0x00
     };
 
-    // PPSE (Proximity Payment System Environment)
+    /*
+     *  PPSE (Proximity Payment System Environment)
+     *
+     *  This is the first select that a point of sale device will send to the payment device.
+     */
     private static final byte[] PPSE_APDU_SELECT = {
-            (byte)0x00, // CLA
-            (byte)0xA4, // INS; A4 = SELECT
-            (byte)0x04, // P1
-            (byte)0x00, // P2
-            (byte)0x0E, // LC; 14 (0x0E) = length("2PAY.SYS.DDF01")
-                // Data (ascii as hex): 2PAY.SYS.DDF01
+            (byte)0x00, // CLA (class of command)
+            (byte)0xA4, // INS (instruction); A4 = select
+            (byte)0x04, // P1  (parameter 1)  (0x04: select by name)
+            (byte)0x00, // P2  (parameter 2)
+            (byte)0x0E, // LC  (length of data)  14 (0x0E) = length("2PAY.SYS.DDF01")
+                // 2PAY.SYS.DDF01 (ASCII values of characters used):
+                // This value requests the card or payment device to list the application
+                // identifiers (AIDs) it supports in the response:
                 '2', 'P', 'A', 'Y', '.', 'S', 'Y', 'S', '.', 'D', 'D', 'F', '0', '1',
-            (byte)0x00 // LE; expected output length=0 implies 256
+            (byte)0x00 // LE   (max length of expected result, 0 implies 256)
 	};
 
 	private static final byte[] PPSE_APDU_SELECT_RESP = {
@@ -45,7 +51,7 @@ public class PaymentService extends HostApduService implements SharedPreferences
             (byte)0x23,  // length = 35
                 (byte)0x84,  // DF Name
                 (byte)0x0E,  // length("2PAY.SYS.DDF01")
-                    // Data (ascii as hex): 2PAY.SYS.DDF01
+                    // Data (ASCII values of characters used):
                     '2', 'P', 'A', 'Y', '.', 'S', 'Y', 'S', '.', 'D', 'D', 'F', '0', '1',
                 (byte)0xA5, // FCI Proprietary Template
                 (byte)0x11, // length = 17
@@ -53,27 +59,36 @@ public class PaymentService extends HostApduService implements SharedPreferences
                     (byte)0x0C, // length = 12
                         (byte)0x0E,
                         (byte)0x61, // Directory Entry
-                        (byte)0x0C,
+                        (byte)0x0C, // Entry length = 12
                         (byte)0x4F, // ADF Name
-                        (byte)0x07, // ADF Length
-                            // Standard AID of a 2Pay applet: A0000000031010
-                            (byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x03, (byte)0x10, (byte)0x10,
+                        (byte)0x07, // ADF Length = 7
+                            // Tell the POS (point of sale terminal) that we support the standard
+                            // Visa credit or debit applet: A0000000031010
+                            // Visa's RID (Registered application provider IDentifier) is 5 bytes:
+                            (byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x03,
+                            // PIX (Proprietary application Identifier eXtension) is the last 2 bytes.
+                            // 10 10 (means visa credit or debit)
+                            (byte)0x10, (byte)0x10,
                     (byte)0x87,  // Application Priority Indicator
                     (byte)0x01,  // length = 1
                         (byte)0x01,
-            (byte) 0x90, // SW1  0x9000 = Success
+            (byte) 0x90, // SW1  (90 00 = Success)
             (byte) 0x00  // SW2
 	};
 
+    /*
+     *  MSD (Magnetic Stripe Data)
+     */
 	private static final byte[] VISA_MSD_SELECT = {
 		    (byte)0x00,  // CLA
-            (byte)0xa4,  // Select INS
-            (byte)0x04,  // P1 (0x04: select by name)
+            (byte)0xa4,  // INS
+            (byte)0x04,  // P1
             (byte)0x00,  // P2
-            (byte)0x07, //  Data length
-                // data: A0000000031010  (Visa debit or credit value)
+            (byte)0x07,  // LC (data length = 7)
+                // POS is selecting the AID (Visa debit or credit) that we specified in the PPSE
+                // response:
                 (byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x03, (byte)0x10, (byte)0x10,
-            (byte)0x00  // LC
+            (byte)0x00   // LE
     };
 
 
@@ -81,7 +96,7 @@ public class PaymentService extends HostApduService implements SharedPreferences
             (byte) 0x6F,  // File Control Information (FCI) Template
             (byte) 0x1E,  // length = 30 (0x1E)
                 (byte) 0x84,  // Dedicated File (DF) Name
-                (byte) 0x07,  // length
+                (byte) 0x07,  // DF length = 7
 
                 // A0000000031010  (Visa debit or credit AID)
                 (byte)0xA0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x03, (byte)0x10, (byte)0x10,
@@ -93,14 +108,14 @@ public class PaymentService extends HostApduService implements SharedPreferences
                     'V', 'I', 'S', 'A', ' ', 'C', 'R', 'E', 'D', 'I', 'T',
                     (byte) 0x9F, (byte) 0x38,  // Processing Options Data Object List (PDOL)
                     (byte) 0x03,  // length
-                    (byte) 0x9F, (byte) 0x66, (byte) 0x02, // PDOL value
+                    (byte) 0x9F, (byte) 0x66, (byte) 0x02, // PDOL value (Does this request terminal type?)
             (byte) 0x90,  // SW1
             (byte) 0x00   // SW2
     };
 
 
     /*
-     *  Get processing options command
+     *  GPO (Get Processing Options) command
      */
     private static final byte[] GPO_COMMAND = {
             (byte) 0x80,  // CLA
@@ -116,6 +131,11 @@ public class PaymentService extends HostApduService implements SharedPreferences
             (byte) 0x00   // Le
     };
 
+
+    /*
+     *  The data in the request can vary, but it won't affect our response. This method
+     *  checks the initial 4 bytes of an APDU to see if it's a GPO command.
+     */
     private boolean isGpoCommand(byte[] apdu) {
         return (apdu.length > 4 &&
                 apdu[0] == GPO_COMMAND[0] &&
@@ -126,6 +146,10 @@ public class PaymentService extends HostApduService implements SharedPreferences
     }
 
 
+    /*
+     *  SwipeYours only emulates Visa MSD, so our response is not dependant on the GPO command
+     *  data.
+     */
     private static final byte[] GPO_COMMAND_RESPONSE = {
             (byte) 0x80,
             (byte) 0x06,  // length
@@ -151,8 +175,10 @@ public class PaymentService extends HostApduService implements SharedPreferences
 
     private static final Pattern TRACK_2_PATTERN = Pattern.compile(".*;(\\d{12,19}=\\d{1,128})\\?.*");
 
-    // Unlike the upper case commands above, the Read REC response changes depending on the track 2
-    // portion of the user's magstripe data.
+    /*
+     *  Unlike the upper case commands above, the Read REC response changes depending on the track 2
+     *  portion of the user's magnetic stripe data.
+     */
     private static byte[] readRecResponse = {};
 
     private static void configureReadRecResponse(String swipeData) {
