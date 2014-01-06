@@ -16,10 +16,9 @@ import static to.noc.android.swipeyours.Constants.SWIPE_DATA_PREF_KEY;
 
 
 /*
- *  The PaymentService is created and destroyed once per NFC transaction.  We include a default,
- *  zero-balance prepaid Visa so the app always has some card data.  Any swipe data configured
- *  by the SetCardActivity and saved as a shared preference will be used, if available, instead
- *  of the included card.
+ *  We include a default, zero-balance prepaid Visa so the app always has some card data.
+ *  Any swipe data configured by the SetCardActivity and saved as a shared preference will
+ *  be used, if available, instead of the included card.
  */
 public class PaymentService extends HostApduService implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -29,7 +28,8 @@ public class PaymentService extends HostApduService implements SharedPreferences
             (byte)0x6F, (byte)0x00
     };
 
-	private static final byte[] PPSE_APDU_SELECT = {
+    // PPSE (Proximity Payment System Environment)
+    private static final byte[] PPSE_APDU_SELECT = {
             (byte)0x00, // CLA
             (byte)0xA4, // INS; A4 = SELECT
             (byte)0x04, // P1
