@@ -20,7 +20,11 @@ If saving your Magstripe data to Google Drive is not a security concern, the mag
 ### Google Play Link ###
 
 https://play.google.com/store/apps/details?id=to.noc.android.swipeyours  
-  
+
+### Article on SwipeYours ###
+
+http://blog.simplytapp.com/2014/01/host-card-emulation-series-swipeyours.html
+
 ### Developing: ###
 
 SwipeYours was created in Android Studio and getting it to work in Eclipse would require moving a lot of files around (i.e. I do not recommend using Eclipse).  To load the project:
