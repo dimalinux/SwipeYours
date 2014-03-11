@@ -44,9 +44,9 @@ public class PaymentService extends HostApduService implements SharedPreferences
                 // identifiers (AIDs) it supports in the response:
                 '2', 'P', 'A', 'Y', '.', 'S', 'Y', 'S', '.', 'D', 'D', 'F', '0', '1',
             (byte)0x00 // LE   (max length of expected result, 0 implies 256)
-	};
+    };
 
-	private static final byte[] PPSE_APDU_SELECT_RESP = {
+    private static final byte[] PPSE_APDU_SELECT_RESP = {
             (byte)0x6F,  // FCI Template
             (byte)0x23,  // length = 35
                 (byte)0x84,  // DF Name
@@ -74,13 +74,13 @@ public class PaymentService extends HostApduService implements SharedPreferences
                         (byte)0x01,
             (byte) 0x90, // SW1  (90 00 = Success)
             (byte) 0x00  // SW2
-	};
+    };
 
     /*
      *  MSD (Magnetic Stripe Data)
      */
-	private static final byte[] VISA_MSD_SELECT = {
-		    (byte)0x00,  // CLA
+    private static final byte[] VISA_MSD_SELECT = {
+            (byte)0x00,  // CLA
             (byte)0xa4,  // INS
             (byte)0x04,  // P1
             (byte)0x00,  // P2
@@ -164,7 +164,7 @@ public class PaymentService extends HostApduService implements SharedPreferences
     };
 
 
-	private static final byte[] READ_REC_COMMAND = {
+    private static final byte[] READ_REC_COMMAND = {
             (byte) 0x00,  // CLA
             (byte) 0xB2,  // INS
             (byte) 0x01,  // P1
@@ -212,21 +212,21 @@ public class PaymentService extends HostApduService implements SharedPreferences
 
     }
 
-	@Override
-	public byte[] processCommandApdu(byte[] commandApdu, Bundle bundle) {
+    @Override
+    public byte[] processCommandApdu(byte[] commandApdu, Bundle bundle) {
         String inboundApduDescription;
         byte[] responseApdu;
 
-		if (Arrays.equals(PPSE_APDU_SELECT, commandApdu)) {
+        if (Arrays.equals(PPSE_APDU_SELECT, commandApdu)) {
             inboundApduDescription = "Received PPSE select: ";
             responseApdu = PPSE_APDU_SELECT_RESP;
-		} else if (Arrays.equals(VISA_MSD_SELECT, commandApdu)) {
+        } else if (Arrays.equals(VISA_MSD_SELECT, commandApdu)) {
             inboundApduDescription =  "Received Visa-MSD select: ";
             responseApdu =  VISA_MSD_SELECT_RESPONSE;
-		} else if (isGpoCommand(commandApdu)) {
+        } else if (isGpoCommand(commandApdu)) {
             inboundApduDescription =  "Received GPO (get processing options): ";
             responseApdu =  GPO_COMMAND_RESPONSE;
-		} else if (Arrays.equals(READ_REC_COMMAND, commandApdu)) {
+        } else if (Arrays.equals(READ_REC_COMMAND, commandApdu)) {
             inboundApduDescription = "Received READ REC: ";
             responseApdu = readRecResponse;
         } else {
@@ -237,8 +237,8 @@ public class PaymentService extends HostApduService implements SharedPreferences
         MainActivity.sendLog(TAG, inboundApduDescription, Util.byteArrayToHex(commandApdu),
                 " / Response: ", Util.byteArrayToHex(responseApdu));
 
-		return responseApdu;
-	}
+        return responseApdu;
+    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
