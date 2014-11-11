@@ -1,21 +1,15 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
-    <ScrollView
-        android:layout_height="fill_parent"
-        android:layout_width="fill_parent">
-
-        <TextView
-            android:id="@+id/activity_log"
-            android:padding="10px"
-            android:freezesText="true"
-            android:textIsSelectable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </ScrollView>
-
-</RelativeLayout>
+    <TextView
+        android:id="@+id/activity_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:freezesText="true"
+        android:padding="10px"
+        android:textIsSelectable="true" />
+    
+</ScrollView>

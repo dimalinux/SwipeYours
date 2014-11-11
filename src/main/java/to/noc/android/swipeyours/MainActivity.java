@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 /*
@@ -26,7 +27,7 @@ public class MainActivity extends Activity {
 
     private static TextView activityLog;
     private static final StringBuilder logCache = new StringBuilder();
-    private static final DateFormat timeStampFmt = new SimpleDateFormat("HH:mm:ss.SSS  ");
+    private static final DateFormat timeStampFmt = new SimpleDateFormat("HH:mm:ss.SSS  ", Locale.US);
 
     private static final String TAG = MainActivity.class.getSimpleName();
     
