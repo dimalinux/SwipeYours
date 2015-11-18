@@ -10,6 +10,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import us.fatehi.creditcardnumber.ServiceCode;
+import us.fatehi.magnetictrack.bankcard.BankCardMagneticTrack;
+import us.fatehi.magnetictrack.bankcard.Track1FormatB;
+import us.fatehi.magnetictrack.bankcard.Track2;
+
+import java.util.ServiceConfigurationError;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,37 +26,58 @@ public class SetCardActivity extends Activity {
 
     /*
      *  Returns true if the passed in track data was successfully parsed, otherwise false.
+     *  Track2 data must be supplied.  If track1 data is available, the name field is pulled
+     *  from it for display purposes.
      */
     private boolean parseTrackData(String trackData) {
-        Pattern pattern = Pattern.compile("^\\s*(?:%B(\\d+)\\^([^^]+)\\^\\d+)?\\?;(\\d+)=(\\d\\d)(\\d\\d)\\d+\\?\\s*$");
-        Matcher match = pattern.matcher(trackData);
 
-        boolean isValid = match.matches();
+        final BankCardMagneticTrack allTracks = BankCardMagneticTrack.from(trackData);
+
+        Track1FormatB track1Data = allTracks.getTrack1();
+        Track2 track2Data = allTracks.getTrack2();
+
+        boolean isValid = track2Data.getPrimaryAccountNumber().isPrimaryAccountNumberValid();
 
         if (isValid) {
-
-            String fullName = match.group(2);
-            String cardNumber = match.group(3);
-            String expDate = match.group(5) + "/" + match.group(4);
-
             int warningVisibility = DEFAULT_SWIPE_DATA.equals(trackData) ?
                     View.VISIBLE : View.GONE;
             findViewById(R.id.using_default_card_warning).setVisibility(warningVisibility);
 
-            TextView currentSwipeDataTextView = (TextView) findViewById(R.id.current_swipe_data);
-            currentSwipeDataTextView.setText(trackData);
+            ServiceCode serviceCode = track2Data.getServiceCode();
 
-            TextView currentNameOnCard = (TextView) findViewById(R.id.name_on_card);
-            currentNameOnCard.setText(fullName);
+            String fullName = track1Data.hasName() ? track1Data.getName().getFullName() : "[none]";
+            findViewById(R.id.optional_name_view).setVisibility(
+                    track1Data.hasName() ? View.VISIBLE : View.GONE
+            );
 
-            TextView cardNumberTextView = (TextView) findViewById(R.id.card_number);
-            cardNumberTextView.setText(cardNumber);
+            String cardNumber = track2Data.getPrimaryAccountNumber().getAccountNumber();
+            String cardBrand = track2Data.getPrimaryAccountNumber().getCardBrand().name();
+            String expDate = track2Data.getExpirationDate().toString();
+            String discretionaryData = track2Data.hasDiscretionaryData() ?
+                    track2Data.getDiscretionaryData() : "[none]";
 
-            TextView cardExpirationTextView = (TextView) findViewById(R.id.card_expiration);
-            cardExpirationTextView.setText(expDate);
+            setTextView(R.id.current_swipe_data, trackData);
+            setTextView(R.id.name_on_card, fullName);
+            setTextView(R.id.card_number, cardNumber);
+            setTextView(R.id.card_brand, cardBrand);
+            setTextView(R.id.card_expiration, expDate);
+            setTextView(R.id.service_code, serviceCode.getServiceCode());
+            setTextView(R.id.service_code1_val, serviceCode.getServiceCode1().getValue() + ":");
+            setTextView(R.id.service_code1_descr, serviceCode.getServiceCode1().getDescription());
+            setTextView(R.id.service_code2_val, serviceCode.getServiceCode2().getValue() + ":");
+            setTextView(R.id.service_code2_descr, serviceCode.getServiceCode2().getDescription());
+            setTextView(R.id.service_code3_val, serviceCode.getServiceCode3().getValue() + ":");
+            setTextView(R.id.service_code3_descr, serviceCode.getServiceCode3().getDescription());
+            setTextView(R.id.discretionary_data, discretionaryData);
+
         }
 
         return isValid;
+    }
+
+    private void setTextView(int id, String textValue) {
+        TextView view = (TextView) findViewById(id);
+        view.setText(textValue);
     }
 
 
@@ -58,7 +85,7 @@ public class SetCardActivity extends Activity {
      *  Triggered by button press
      */
     public void setNewCard(View view) {
-        String newSwipeData = ((EditText) findViewById(R.id.swipe_data)).getText().toString();
+        String newSwipeData = ((EditText) findViewById(R.id.swipe_data)).getText().toString().replaceAll("\\s+","");
         boolean newDataIsValid = parseTrackData(newSwipeData);
 
         String toastMessage;

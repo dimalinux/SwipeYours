@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="cardDataLighter"   type="color">#FF8DFDFF</item>
+    <item name="cardDataDarker"    type="color">#FF00FEFF</item>
+    <item name="magstripeHelp"     type="color">#FFFAFF94</item>
+    <item name="defaultMagWarning" type="color">#FFFFB0CB</item>
+</resources>

@@ -81,10 +81,10 @@ public class MainActivity extends Activity {
 
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         activityLog = (TextView) findViewById(R.id.activity_log);
 
         CardEmulation cardEmulationManager = CardEmulation.getInstance(NfcAdapter.getDefaultAdapter(this));
@@ -92,15 +92,15 @@ public class MainActivity extends Activity {
                 new ComponentName(getApplicationContext(), PaymentService.class.getCanonicalName());
 
         if (!cardEmulationManager.isDefaultServiceForCategory(paymentServiceComponent, CardEmulation.CATEGORY_PAYMENT)) {
-    		Intent intent = new Intent(CardEmulation.ACTION_CHANGE_DEFAULT);
-    		intent.putExtra(CardEmulation.EXTRA_CATEGORY, CardEmulation.CATEGORY_PAYMENT);
-    		intent.putExtra(CardEmulation.EXTRA_SERVICE_COMPONENT, paymentServiceComponent);
-    		startActivityForResult(intent, 0);
+            Intent intent = new Intent(CardEmulation.ACTION_CHANGE_DEFAULT);
+            intent.putExtra(CardEmulation.EXTRA_CATEGORY, CardEmulation.CATEGORY_PAYMENT);
+            intent.putExtra(CardEmulation.EXTRA_SERVICE_COMPONENT, paymentServiceComponent);
+            startActivityForResult(intent, 0);
             log(TAG, "onCreate: Requested Android to make SwipeYours the default payment app");
         } else {
             log(TAG, "onCreate: SwipeYours is the default NFC payment app");
         }
-	}
+    }
 
 
     @Override
