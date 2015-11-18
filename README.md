@@ -7,7 +7,7 @@ SwipeYours allows users to input their own Visa magstripe data to perform NFC pa
 * Android version 4.4 (KitKat) or later.  HCE (Host Card Emulation) was not available prior to KitKat.
 * NFC (Near Field communications).
   
-The Google Nexus 4 and 5 are both phones that meet the above requirements.
+The Google Nexus 4, 5 and 6 are all phones that meet the above requirements.
 
 ### Magstripe Data Requirement: ###
 
